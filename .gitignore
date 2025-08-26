@@ -31,3 +31,10 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Ignore original large data files (use chunks instead)
+train-test-validate/ML-Testing/open_images_test_asr.jsonl
+train-test-validate/ML-Testing/open_images_test_localized_narratives.jsonl
+train-test-validate/ML-Training/open_images_train_v6_asr.jsonl
+train-test-validate/ML-Training/open_images_train_v6_localized_narratives*.jsonl
+train-test-validate/ML-Validation/open_images_validation_localized_narratives.jsonl
