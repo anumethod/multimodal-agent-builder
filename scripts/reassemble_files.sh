@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Defensive: abort if not running under bash!
+if [ -z "$BASH_VERSION" ]; then
+  echo "[ERROR] This script requires Bash. Please run it with: bash $0 ..."
+  exit 1
+fi
+
+set -euo pipefail
 
 ################################################################################
 # Reassemble Chunked Dataset Files
@@ -32,12 +40,15 @@ VERBOSE=false
 DRY_RUN=false
 FORCE=false
 CLEANUP=false
+KIND="all" # possible: testing, training, validation, all
+LOGFILE="logs/reassembly-$(date +%F).log"
 
 # Script configuration
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 CHUNKS_DIR="${REPO_ROOT}/train-test-validate/chunks"
 OUTPUT_BASE="${REPO_ROOT}/train-test-validate"
+mkdir -p "logs" 2>/dev/null || true
 
 # Statistics
 TOTAL_FILES=0
@@ -53,17 +64,19 @@ Usage: $0 [options]
 Reassemble chunked dataset files from manifest specifications.
 
 Options:
-    -h, --help     Show this help message
-    -v, --verbose  Enable verbose output
-    -d, --dry-run  Show what would be done without actually doing it
-    -f, --force    Overwrite existing files without prompting
-    -c, --cleanup  Remove chunk files after successful reassembly
+    -h, --help       Show this help message
+    -v, --verbose    Enable verbose output
+    -d, --dry-run    Show what would be done without actually doing it
+    -f, --force      Overwrite existing files without prompting
+    -c, --cleanup    Remove chunk files after successful reassembly
+    --kind KIND      Restrict to 'testing', 'training', 'validation', or 'all' (default: all)
+    --log FILE       Log status/errors to FILE (default: logs/reassembly-YYYY-MM-DD.log)
 
 Examples:
-    $0                    # Reassemble all files
-    $0 -v                 # Reassemble with verbose output
-    $0 -d                 # Dry run to see what would be done
-    $0 -f -c              # Force overwrite and cleanup chunks
+    $0 --kind testing           # Reassemble only ML-Testing
+    $0 --kind all -v            # All files, verbose
+    $0 --dry-run --log logs/debug.log
+    $0 --force --cleanup
 
 EOF
 }
@@ -73,6 +86,8 @@ print_message() {
     local color=$1
     local message=$2
     echo -e "${color}${message}${NC}"
+    # Also log to logfile, strip ANSI color codes
+    echo -e "${message}" | sed 's/\x1b\[[0-9;]*m//g' >> "$LOGFILE"
 }
 
 # Function to print verbose messages
@@ -96,7 +111,7 @@ calculate_md5() {
 
 # Function to format file size
 format_size() {
-    local size=$1
+    local size=${1:-0}
     local units=("B" "KB" "MB" "GB")
     local unit=0
     local formatted_size=$size
@@ -117,15 +132,20 @@ parse_manifest() {
     verbose_print "Parsing manifest: $manifest_file"
     
     # Extract values from manifest
-    local original_file=$(grep "^original_file:" "$manifest_file" | cut -d' ' -f2)
+    local original_file=$(grep "^original_file:" "$manifest_file" | cut -d' ' -f2-)
     local original_size=$(grep "^original_size:" "$manifest_file" | cut -d' ' -f2)
     local original_md5=$(grep "^original_md5:" "$manifest_file" | cut -d' ' -f2)
     
-    # Extract chunk information
+    # Extract chunk information - handle YAML indented format
     local chunks=()
     while IFS= read -r line; do
-        if [[ "$line" =~ name:\ (.+) ]]; then
-            chunks+=("${BASH_REMATCH[1]}")
+        # Look for lines with "- name:" pattern (YAML list format)
+        if [[ "$line" =~ -\ *name:\ *(.+) ]]; then
+            # Trim leading/trailing whitespace from chunk name
+            local chunk_name="${BASH_REMATCH[1]}"
+            chunk_name="${chunk_name#"${chunk_name%%[![:space:]]*}"}"
+            chunk_name="${chunk_name%"${chunk_name##*[![:space:]]}"}"
+            chunks+=("$chunk_name")
         fi
     done < "$manifest_file"
     
@@ -283,6 +303,14 @@ while [[ $# -gt 0 ]]; do
             CLEANUP=true
             shift
             ;;
+        --kind)
+            KIND="$2"
+            shift 2
+            ;;
+        --log)
+            LOGFILE="$2"
+            shift 2
+            ;;
         *)
             print_message "$RED" "Unknown option: $1"
             show_usage
@@ -290,6 +318,13 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Validate KIND argument
+if [[ ! "$KIND" =~ ^(all|testing|training|validation)$ ]]; then
+    print_message "$RED" "Invalid --kind: $KIND (valid: all, testing, training, validation)"
+    show_usage
+    exit 2
+fi
 
 # Main execution
 print_message "$GREEN" "════════════════════════════════════════════════════════════════"
@@ -306,21 +341,31 @@ if [ ! -d "$CHUNKS_DIR" ]; then
     exit 1
 fi
 
-# Find all manifest files
+# Find all manifest files for specific kind
 print_message "$BLUE" "\n📋 Searching for manifest files..."
-# Use array assignment for better compatibility (mapfile not available on older bash)
 manifest_files=()
-while IFS= read -r line; do
-    manifest_files+=("$line")
-done < <(find "$CHUNKS_DIR" -name "*.manifest" -type f | sort)
+case "$KIND" in
+  testing)
+    manifest_glob="$CHUNKS_DIR/ML-Testing/*.manifest" ;;
+  training)
+    manifest_glob="$CHUNKS_DIR/ML-Training/*.manifest" ;;
+  validation)
+    manifest_glob="$CHUNKS_DIR/ML-Validation/*.manifest" ;;
+  all)
+    manifest_glob="$CHUNKS_DIR"'/'"*.manifest $CHUNKS_DIR/ML-*/*.manifest" ;;
+esac
+
+for mf in $manifest_glob; do
+  [ -f "$mf" ] && manifest_files+=("$mf")
+done
 
 if [ ${#manifest_files[@]} -eq 0 ]; then
-    print_message "$YELLOW" "⚠️  No manifest files found in $CHUNKS_DIR"
+    print_message "$YELLOW" "⚠️  No manifest files found in $CHUNKS_DIR for kind $KIND"
     exit 0
 fi
 
 TOTAL_FILES=${#manifest_files[@]}
-print_message "$GREEN" "📊 Found $TOTAL_FILES manifest file(s) to process"
+print_message "$GREEN" "📊 Found $TOTAL_FILES manifest file(s) to process (kind: $KIND)"
 
 # Process each manifest file
 for manifest_file in "${manifest_files[@]}"; do

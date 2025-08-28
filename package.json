@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "prettier": "prettier --write .",
+    "lint:fix": "eslint --fix .",
+    "postinstall": "npm run prettier && npm run lint:fix"
+  }
+}
+

@@ -1,5 +1,17 @@
 # Multimodal Agent Builder
 
+## Troubleshooting & Developer Notes
+
+- **Use Bash for Shell Scripts:** If you see “unexpected operator” or “parse error,” always run scripts with `bash script.sh` (not `sh script.sh` or in zsh).
+- **Formatting and Linting:** After cloning, run `npm run prettier` and `npm run lint:fix` to fix common JSX, import, and whitespace issues.
+- **Editor/LSP Setup:** TypeScript warnings may appear if your environment uses a different TS or ESLint version; run `npm install` and use VSCode for best results.
+- **JSX Nesting:** Avoid placing `<a>` inside custom `<Link>`. If needed, use `<span>` or your own `<AppLink>` instead to avoid React warnings.
+- **Dependencies:** If some UI icons or components are missing, check your `package.json`. Run `npm install` to ensure all dependencies are present.
+- **TypeScript Strictness:** Some warnings may appear if strict options are enabled (see `tsconfig.json`). They don't break runtime behavior but should be resolved for clarity.
+- **String Matching in CLI Edits:** Automated editing tools require exact matches including whitespace; copy relevant code and check file content before using CLI replacements.
+
+See also: KNOWN_ISSUES.md (if present) for current edge cases and gotchas.
+
 A powerful and flexible framework for building multimodal AI agents using state-of-the-art language models including OpenAI GPT-4, Google Gemini-2.5, and Anthropic Claude.
 
 ## 🚀 Features
