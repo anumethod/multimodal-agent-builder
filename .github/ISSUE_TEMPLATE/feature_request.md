@@ -7,21 +7,27 @@ assignees: ''
 ---
 
 ## 🚀 Feature Summary
-*Provide a brief, clear summary of the feature you'd like to see.*
+
+_Provide a brief, clear summary of the feature you'd like to see._
 
 ## 🎯 Motivation
-*Why is this feature important? What problem does it solve?*
+
+_Why is this feature important? What problem does it solve?_
 
 ### Current Situation
-*Describe the current behavior or limitation.*
+
+_Describe the current behavior or limitation._
 
 ### Desired Outcome
-*Describe what you'd like to happen instead.*
+
+_Describe what you'd like to happen instead._
 
 ## 💡 Proposed Solution
-*Describe the solution you'd like to see implemented.*
+
+_Describe the solution you'd like to see implemented._
 
 ### API Design (if applicable)
+
 ```python
 # Example of how the feature might be used
 agent = MultimodalAgent(...)
@@ -29,6 +35,7 @@ result = agent.new_feature(...)
 ```
 
 ### Configuration Example (if applicable)
+
 ```yaml
 # Example configuration
 feature_config:
@@ -37,17 +44,20 @@ feature_config:
 ```
 
 ## 🔄 Alternatives Considered
-*Describe any alternative solutions or features you've considered and why you prefer this approach.*
+
+_Describe any alternative solutions or features you've considered and why you prefer this approach._
 
 ## 📊 Use Cases
-*List specific use cases where this feature would be valuable:*
+
+_List specific use cases where this feature would be valuable:_
 
 1. **Use Case 1:** Description...
 2. **Use Case 2:** Description...
 3. **Use Case 3:** Description...
 
 ## 🔗 Related Work
-*Are there similar features in other projects? Include links if available.*
+
+_Are there similar features in other projects? Include links if available._
 
 - Project X implements this as...
 - Paper Y describes an approach for...
@@ -55,17 +65,20 @@ feature_config:
 ## 📈 Impact Assessment
 
 ### Benefits
+
 - [ ] Improves performance
 - [ ] Enhances user experience
 - [ ] Enables new capabilities
 - [ ] Reduces complexity
-- [ ] Other: ___________
+- [ ] Other: ****\_\_\_****
 
 ### Potential Drawbacks
-*Are there any potential negative impacts or trade-offs?*
+
+_Are there any potential negative impacts or trade-offs?_
 
 ## 🏷️ Priority Level
-*How important is this feature to you?*
+
+_How important is this feature to you?_
 
 - [ ] Critical - Blocking my use case
 - [ ] High - Would significantly improve my workflow
@@ -73,13 +86,16 @@ feature_config:
 - [ ] Low - Future consideration
 
 ## 📝 Implementation Notes
-*If you have thoughts on implementation, share them here:*
+
+_If you have thoughts on implementation, share them here:_
+
 - Technical considerations
 - Dependencies or prerequisites
 - Potential challenges
 - Performance implications
 
 ## ✅ Checklist
+
 - [ ] I have searched for similar feature requests and didn't find a duplicate
 - [ ] I have clearly described the problem this feature would solve
 - [ ] I have provided concrete use cases

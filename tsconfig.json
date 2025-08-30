@@ -1,9 +1,21 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true
-  }
+  },
+  "include": [
+    "server/**/*.ts",
+    "shared/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "train-test-validate",
+    "multimodal-agent-builder"
+  ]
 }
-

@@ -2,7 +2,8 @@
   "scripts": {
     "prettier": "prettier --write .",
     "lint:fix": "eslint --fix .",
-    "postinstall": "npm run prettier && npm run lint:fix"
+    "postinstall": "npm run prettier && npm run lint:fix",
+    "check:ts": "tsc --noEmit",
+    "check": "npm run check:ts && eslint ."
   }
 }
-

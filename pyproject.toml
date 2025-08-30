@@ -26,6 +26,12 @@ dependencies = [
     "pandas>=2.0.0",
     "httpx>=0.28.0",
     "python-multipart>=0.0.5",
+    "redis>=5.0.0",
+    "pypdf>=4.0.0",
+    "opentelemetry-sdk>=1.26.0",
+    "opentelemetry-exporter-otlp>=1.26.0",
+    "opentelemetry-instrumentation-fastapi>=0.47b0",
+    "opentelemetry-instrumentation-httpx>=0.47b0",
 ]
 
 [project.optional-dependencies]
@@ -37,6 +43,7 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.0.0",
     "ipython>=8.0.0",
+    "bandit[toml]>=1.7.9",
 ]
 
 [build-system]

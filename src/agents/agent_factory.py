@@ -17,6 +17,7 @@ from src.models.openai_client import OpenAIClient
 
 class AgentType(Enum):
     """Available agent types."""
+
     BASE = "base"
     MULTIMODAL = "multimodal"
     LANGCHAIN = "langchain"
@@ -26,6 +27,7 @@ class AgentType(Enum):
 
 class LLMProvider(Enum):
     """Available LLM providers."""
+
     OPENAI = "openai"
     GEMINI = "gemini"
     ANTHROPIC = "anthropic"
@@ -34,23 +36,21 @@ class LLMProvider(Enum):
 
 class AgentFactory:
     """Factory for creating AI agents."""
-    
+
     @staticmethod
     def create_llm_client(
-        provider: Union[str, LLMProvider],
-        model: Optional[str] = None,
-        **kwargs
+        provider: Union[str, LLMProvider], model: Optional[str] = None, **kwargs
     ) -> BaseLLMClient:
         """Create an LLM client.
-        
+
         Args:
             provider: LLM provider name or enum
             model: Optional model name
             **kwargs: Additional parameters for the client
-            
+
         Returns:
             LLM client instance
-            
+
         Raises:
             ValueError: If provider is not supported
         """
@@ -61,7 +61,7 @@ class AgentFactory:
                 provider = "anthropic"
         else:
             provider = provider.value
-        
+
         if provider == "openai":
             return OpenAIClient(model=model, **kwargs)
         elif provider == "gemini":
@@ -70,7 +70,7 @@ class AgentFactory:
             return ClaudeClient(model=model, **kwargs)
         else:
             raise ValueError(f"Unknown provider: {provider}")
-    
+
     @staticmethod
     def create_agent(
         name: str,
@@ -80,10 +80,10 @@ class AgentFactory:
         description: str = "",
         system_prompt: Optional[str] = None,
         tools: Optional[List[Any]] = None,
-        **kwargs
+        **kwargs,
     ) -> BaseAgent:
         """Create an AI agent.
-        
+
         Args:
             name: Agent name
             agent_type: Type of agent to create
@@ -93,25 +93,27 @@ class AgentFactory:
             system_prompt: Optional system prompt
             tools: Optional list of tools
             **kwargs: Additional configuration parameters
-            
+
         Returns:
             Agent instance
-            
+
         Raises:
             ValueError: If agent type is not supported
         """
         # Support alias 'type' provided by callers
-        if "type" in kwargs and (not isinstance(agent_type, str) or agent_type == AgentType.MULTIMODAL):
+        if "type" in kwargs and (
+            not isinstance(agent_type, str) or agent_type == AgentType.MULTIMODAL
+        ):
             agent_type = kwargs.pop("type")
         # Normalize agent_type to string
         if isinstance(agent_type, str):
             agent_type = agent_type.lower()
         else:
             agent_type = agent_type.value
-        
+
         # Create LLM client
         llm_client = AgentFactory.create_llm_client(provider, model, **kwargs)
-        
+
         # Create appropriate config based on agent type
         if agent_type in ["multimodal", AgentType.MULTIMODAL.value]:
             config = MultimodalAgentConfig(
@@ -120,10 +122,10 @@ class AgentFactory:
                 model_provider=provider if isinstance(provider, str) else provider.value,
                 model=model,
                 system_prompt=system_prompt,
-                **kwargs
+                **kwargs,
             )
             return MultimodalAgent(config, llm_client, tools)
-        
+
         elif agent_type in ["langchain", AgentType.LANGCHAIN.value]:
             config = LangChainAgentConfig(
                 name=name,
@@ -131,10 +133,10 @@ class AgentFactory:
                 model_provider=provider if isinstance(provider, str) else provider.value,
                 model=model,
                 system_prompt=system_prompt,
-                **kwargs
+                **kwargs,
             )
             return LangChainAgent(config, llm_client, tools)
-        
+
         elif agent_type in ["base", AgentType.BASE.value, "simple", AgentType.SIMPLE.value]:
             config = AgentConfig(
                 name=name,
@@ -142,12 +144,13 @@ class AgentFactory:
                 model_provider=provider if isinstance(provider, str) else provider.value,
                 model=model,
                 system_prompt=system_prompt,
-                **kwargs
+                **kwargs,
             )
             # Base is abstract, so create a simple implementation
             from src.agents.simple_agent import SimpleAgent
+
             return SimpleAgent(config, llm_client, tools)
-        
+
         else:
             raise ValueError(f"Unknown agent type: {agent_type}")
 
@@ -158,7 +161,7 @@ class AgentFactory:
         model: Optional[str] = None,
         description: str = "",
         system_prompt: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> BaseAgent:
         """Create a simple (base) agent."""
         return AgentFactory.create_agent(
@@ -168,9 +171,9 @@ class AgentFactory:
             model=model,
             description=description,
             system_prompt=system_prompt,
-            **kwargs
+            **kwargs,
         )
-    
+
     @staticmethod
     def create_multimodal_agent(
         name: str,
@@ -178,10 +181,10 @@ class AgentFactory:
         model: Optional[str] = None,
         enable_vision: bool = True,
         enable_audio: bool = True,
-        **kwargs
+        **kwargs,
     ) -> MultimodalAgent:
         """Create a multimodal agent.
-        
+
         Args:
             name: Agent name
             provider: LLM provider
@@ -189,7 +192,7 @@ class AgentFactory:
             enable_vision: Enable vision processing
             enable_audio: Enable audio processing
             **kwargs: Additional configuration
-            
+
         Returns:
             Multimodal agent instance
         """
@@ -200,9 +203,9 @@ class AgentFactory:
             model=model,
             enable_vision=enable_vision,
             enable_audio=enable_audio,
-            **kwargs
+            **kwargs,
         )
-    
+
     @staticmethod
     def create_langchain_agent(
         name: str,
@@ -211,10 +214,10 @@ class AgentFactory:
         tools: Optional[List[BaseTool]] = None,
         enable_search: bool = True,
         enable_calculator: bool = True,
-        **kwargs
+        **kwargs,
     ) -> LangChainAgent:
         """Create a LangChain agent with tools.
-        
+
         Args:
             name: Agent name
             provider: LLM provider
@@ -223,7 +226,7 @@ class AgentFactory:
             enable_search: Enable web search
             enable_calculator: Enable calculator
             **kwargs: Additional configuration
-            
+
         Returns:
             LangChain agent instance
         """
@@ -235,16 +238,16 @@ class AgentFactory:
             tools=tools,
             enable_search=enable_search,
             enable_calculator=enable_calculator,
-            **kwargs
+            **kwargs,
         )
-    
+
     @staticmethod
     def create_agent_from_config(config: Dict[str, Any]) -> BaseAgent:
         """Create an agent from a configuration dictionary.
-        
+
         Args:
             config: Configuration dictionary
-            
+
         Returns:
             Agent instance
         """
@@ -252,16 +255,16 @@ class AgentFactory:
         name = config.get("name", "Agent")
         agent_type = config.get("type", "multimodal")
         provider = config.get("provider", "openai")
-        
+
         # Extract optional fields
         model = config.get("model")
         description = config.get("description", "")
         system_prompt = config.get("system_prompt")
         tools = config.get("tools", [])
-        
+
         # Get additional configuration
         agent_config = config.get("config", {})
-        
+
         return AgentFactory.create_agent(
             name=name,
             agent_type=agent_type,
@@ -270,22 +273,22 @@ class AgentFactory:
             description=description,
             system_prompt=system_prompt,
             tools=tools,
-            **agent_config
+            **agent_config,
         )
-    
+
     @staticmethod
     def get_available_providers() -> List[str]:
         """Get list of available LLM providers.
-        
+
         Returns:
             List of provider names
         """
         return [provider.value for provider in LLMProvider]
-    
+
     @staticmethod
     def get_available_agent_types() -> List[str]:
         """Get list of available agent types.
-        
+
         Returns:
             List of agent type names
         """
@@ -293,35 +296,29 @@ class AgentFactory:
         types = {agent_type.value for agent_type in AgentType}
         types.add("simple")
         return sorted(types)
-    
+
     @staticmethod
     def get_provider_models(provider: Union[str, LLMProvider]) -> List[str]:
         """Get available models for a provider.
-        
+
         Args:
             provider: LLM provider
-            
+
         Returns:
             List of model names
         """
         if isinstance(provider, LLMProvider):
             provider = provider.value
-        
+
         models = {
-            "openai": [
-                "gpt-4-turbo-preview",
-                "gpt-4-turbo",
-                "gpt-4",
-                "gpt-4-32k",
-                "gpt-3.5-turbo"
-            ],
+            "openai": ["gpt-4-turbo-preview", "gpt-4-turbo", "gpt-4", "gpt-4-32k", "gpt-3.5-turbo"],
             "gemini": [
                 "gemini-2.5-flash",
                 "gemini-2.5-pro",
                 "gemini-1.5-flash",
                 "gemini-1.5-pro",
                 "gemini-pro",
-                "gemini-pro-vision"
+                "gemini-pro-vision",
             ],
             "anthropic": [
                 "claude-3-opus-20240229",
@@ -329,8 +326,8 @@ class AgentFactory:
                 "claude-3-sonnet-20240229",
                 "claude-3-haiku-20240307",
                 "claude-2.1",
-                "claude-2.0"
-            ]
+                "claude-2.0",
+            ],
         }
-        
+
         return models.get(provider.lower(), [])

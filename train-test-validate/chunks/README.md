@@ -33,6 +33,7 @@ To reassemble the chunked files into their original form:
 ```
 
 This will:
+
 1. Read the manifest files to understand the chunk structure
 2. Concatenate chunks in the correct order
 3. Verify checksums to ensure data integrity
@@ -49,6 +50,7 @@ This will:
 ## Manifest Files
 
 Each dataset has a `.manifest` file that contains:
+
 - Original file path
 - Original file size
 - MD5 checksum of the original file

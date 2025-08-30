@@ -2,6 +2,8 @@ from src.utils.dataset_manager import DatasetManager
 from src.agents.data_analysis_agent import DataAnalysisAgent
 from src.agents.data_filtration_agent import DataFiltrationAgent
 from src.agents.data_management_agent import DataManagementAgent
+from src.agents.search_replace_agent import SearchReplaceAgent
+
 
 class AgentBuilder:
     """
@@ -12,6 +14,7 @@ class AgentBuilder:
         filtering = builder.build_data_filtration_agent()
         mgmt = builder.build_data_management_agent()
     """
+
     def __init__(self, dataset_root: str = "train-test-validate"):
         self.dataset_manager = DatasetManager(dataset_root)
 
@@ -24,3 +27,5 @@ class AgentBuilder:
     def build_data_management_agent(self):
         return DataManagementAgent(self.dataset_manager)
 
+    def build_search_replace_agent(self):
+        return SearchReplaceAgent(repo_root=str(self.dataset_manager.root))

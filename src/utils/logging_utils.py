@@ -12,16 +12,16 @@ from config.config import settings
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter with colors for terminal output."""
-    
+
     COLORS = {
-        'DEBUG': '\033[36m',     # Cyan
-        'INFO': '\033[32m',      # Green
-        'WARNING': '\033[33m',   # Yellow
-        'ERROR': '\033[31m',     # Red
-        'CRITICAL': '\033[35m',  # Magenta
+        "DEBUG": "\033[36m",  # Cyan
+        "INFO": "\033[32m",  # Green
+        "WARNING": "\033[33m",  # Yellow
+        "ERROR": "\033[31m",  # Red
+        "CRITICAL": "\033[35m",  # Magenta
     }
-    RESET = '\033[0m'
-    
+    RESET = "\033[0m"
+
     def format(self, record):
         log_color = self.COLORS.get(record.levelname, self.RESET)
         record.levelname = f"{log_color}{record.levelname}{self.RESET}"
@@ -30,7 +30,7 @@ class ColoredFormatter(logging.Formatter):
 
 class JSONFormatter(logging.Formatter):
     """JSON formatter for structured logging."""
-    
+
     def format(self, record):
         log_data = {
             "timestamp": datetime.utcnow().isoformat(),
@@ -41,20 +41,37 @@ class JSONFormatter(logging.Formatter):
             "function": record.funcName,
             "line": record.lineno,
         }
-        
+
         # Add exception info if present
         if record.exc_info:
             log_data["exception"] = self.formatException(record.exc_info)
-        
+
         # Add extra fields
         for key, value in record.__dict__.items():
-            if key not in ['name', 'msg', 'args', 'created', 'filename', 
-                          'funcName', 'levelname', 'levelno', 'lineno', 
-                          'module', 'msecs', 'pathname', 'process', 
-                          'processName', 'relativeCreated', 'thread', 
-                          'threadName', 'exc_info', 'exc_text', 'stack_info']:
+            if key not in [
+                "name",
+                "msg",
+                "args",
+                "created",
+                "filename",
+                "funcName",
+                "levelname",
+                "levelno",
+                "lineno",
+                "module",
+                "msecs",
+                "pathname",
+                "process",
+                "processName",
+                "relativeCreated",
+                "thread",
+                "threadName",
+                "exc_info",
+                "exc_text",
+                "stack_info",
+            ]:
                 log_data[key] = value
-        
+
         return json.dumps(log_data)
 
 
@@ -62,69 +79,65 @@ def setup_logger(
     name: str = "multimodal_agent",
     level: Optional[str] = None,
     log_file: Optional[str] = None,
-    format_type: Optional[str] = None
+    format_type: Optional[str] = None,
 ) -> logging.Logger:
     """Setup a logger with configured handlers.
-    
+
     Args:
         name: Logger name
         level: Log level (uses settings default if None)
         log_file: Optional log file path
         format_type: 'json' or 'plain' (uses settings default if None)
-        
+
     Returns:
         Configured logger
     """
     logger = logging.getLogger(name)
-    
+
     # Use settings defaults if not provided
     level = level or settings.log_level
     format_type = format_type or settings.log_format
-    
+
     logger.setLevel(getattr(logging, level.upper()))
-    
+
     # Remove existing handlers
     logger.handlers = []
-    
+
     # Console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(getattr(logging, level.upper()))
-    
+
     # Choose formatter
     if format_type == "json":
         formatter = JSONFormatter()
     else:
         if sys.stdout.isatty():  # Use colors if terminal
-            formatter = ColoredFormatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
+            formatter = ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         else:
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
-    
+            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
-    
+
     # File handler if specified
     if log_file:
         file_handler = logging.FileHandler(log_file)
         file_handler.setLevel(getattr(logging, level.upper()))
-        
+
         # Always use JSON format for file logs
         file_formatter = JSONFormatter()
         file_handler.setFormatter(file_formatter)
         logger.addHandler(file_handler)
-    
+
     return logger
 
 
 def get_agent_logger(agent_id: str) -> logging.Logger:
     """Get a logger for a specific agent.
-    
+
     Args:
         agent_id: Agent identifier
-        
+
     Returns:
         Logger for the agent
     """
@@ -136,10 +149,10 @@ def log_api_request(
     method: str,
     endpoint: str,
     data: Optional[Dict[str, Any]] = None,
-    headers: Optional[Dict[str, str]] = None
+    headers: Optional[Dict[str, str]] = None,
 ):
     """Log an API request.
-    
+
     Args:
         logger: Logger to use
         method: HTTP method
@@ -153,9 +166,12 @@ def log_api_request(
             "http_method": method,
             "endpoint": endpoint,
             "request_data": data,
-            "headers": {k: v for k, v in (headers or {}).items() 
-                       if k.lower() not in ['authorization', 'api-key']}
-        }
+            "headers": {
+                k: v
+                for k, v in (headers or {}).items()
+                if k.lower() not in ["authorization", "api-key"]
+            },
+        },
     )
 
 
@@ -163,10 +179,10 @@ def log_api_response(
     logger: logging.Logger,
     status_code: int,
     response_data: Optional[Any] = None,
-    error: Optional[str] = None
+    error: Optional[str] = None,
 ):
     """Log an API response.
-    
+
     Args:
         logger: Logger to use
         status_code: HTTP status code
@@ -174,20 +190,10 @@ def log_api_response(
         error: Error message if any
     """
     if error:
-        logger.error(
-            "API Error",
-            extra={
-                "status_code": status_code,
-                "error": error
-            }
-        )
+        logger.error("API Error", extra={"status_code": status_code, "error": error})
     else:
         logger.info(
-            "API Response",
-            extra={
-                "status_code": status_code,
-                "response_data": response_data
-            }
+            "API Response", extra={"status_code": status_code, "response_data": response_data}
         )
 
 
@@ -197,10 +203,10 @@ def log_agent_action(
     action: str,
     input_data: Any,
     output_data: Any,
-    duration_ms: Optional[float] = None
+    duration_ms: Optional[float] = None,
 ):
     """Log an agent action.
-    
+
     Args:
         logger: Logger to use
         agent_id: Agent identifier
@@ -216,8 +222,8 @@ def log_agent_action(
             "action": action,
             "input": input_data,
             "output": output_data,
-            "duration_ms": duration_ms
-        }
+            "duration_ms": duration_ms,
+        },
     )
 
 
@@ -228,10 +234,10 @@ def log_model_usage(
     prompt_tokens: int,
     completion_tokens: int,
     total_tokens: int,
-    cost: Optional[float] = None
+    cost: Optional[float] = None,
 ):
     """Log model token usage.
-    
+
     Args:
         logger: Logger to use
         provider: LLM provider
@@ -249,31 +255,27 @@ def log_model_usage(
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,
             "total_tokens": total_tokens,
-            "estimated_cost": cost
-        }
+            "estimated_cost": cost,
+        },
     )
 
 
 class ErrorTracker:
     """Track and analyze errors."""
-    
+
     def __init__(self, max_errors: int = 100):
         """Initialize error tracker.
-        
+
         Args:
             max_errors: Maximum number of errors to track
         """
         self.errors = []
         self.max_errors = max_errors
         self.error_counts = {}
-    
-    def track_error(
-        self,
-        error: Exception,
-        context: Optional[Dict[str, Any]] = None
-    ):
+
+    def track_error(self, error: Exception, context: Optional[Dict[str, Any]] = None):
         """Track an error.
-        
+
         Args:
             error: Exception that occurred
             context: Additional context
@@ -282,31 +284,31 @@ class ErrorTracker:
             "timestamp": datetime.utcnow().isoformat(),
             "type": type(error).__name__,
             "message": str(error),
-            "context": context or {}
+            "context": context or {},
         }
-        
+
         self.errors.append(error_data)
-        
+
         # Keep only max_errors
         if len(self.errors) > self.max_errors:
-            self.errors = self.errors[-self.max_errors:]
-        
+            self.errors = self.errors[-self.max_errors :]
+
         # Update counts
         error_type = type(error).__name__
         self.error_counts[error_type] = self.error_counts.get(error_type, 0) + 1
-    
+
     def get_summary(self) -> Dict[str, Any]:
         """Get error summary.
-        
+
         Returns:
             Summary of tracked errors
         """
         return {
             "total_errors": len(self.errors),
             "error_types": self.error_counts,
-            "recent_errors": self.errors[-10:] if self.errors else []
+            "recent_errors": self.errors[-10:] if self.errors else [],
         }
-    
+
     def clear(self):
         """Clear all tracked errors."""
         self.errors = []
@@ -319,24 +321,18 @@ error_tracker = ErrorTracker()
 
 
 def handle_exception(
-    exc: Exception,
-    context: Optional[Dict[str, Any]] = None,
-    reraise: bool = True
+    exc: Exception, context: Optional[Dict[str, Any]] = None, reraise: bool = True
 ):
     """Handle an exception with logging and tracking.
-    
+
     Args:
         exc: Exception to handle
         context: Additional context
         reraise: Whether to reraise the exception
     """
-    logger.error(
-        f"Exception occurred: {exc}",
-        exc_info=True,
-        extra={"context": context}
-    )
-    
+    logger.error(f"Exception occurred: {exc}", exc_info=True, extra={"context": context})
+
     error_tracker.track_error(exc, context)
-    
+
     if reraise:
         raise

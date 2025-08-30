@@ -70,6 +70,7 @@ cp .env.example .env
 ```
 
 Edit `.env` and add your API keys:
+
 - `OPENAI_API_KEY`: Your OpenAI API key
 - `GEMINI_API_KEY`: Your Google Gemini API key
 - `ANTHROPIC_API_KEY`: Your Anthropic API key
@@ -159,9 +160,19 @@ Run with coverage:
 pytest --cov=src --cov-report=html
 ```
 
+## Security
+
+- Rate limiting (Redis optional) and payload size guard. Configure via `.env`:
+  - `RATE_LIMIT_ENABLED`, `RATE_LIMIT_REQUESTS`, `RATE_LIMIT_PERIOD`, `REDIS_URL`.
+- CORS is environment-aware via `CORS_ALLOWED_ORIGINS` (in development `*` permitted by default; restrict in prod).
+- Upload endpoints validate file type and size against `ALLOWED_IMAGE_TYPES`, `ALLOWED_AUDIO_TYPES`, `MAX_FILE_SIZE_MB`.
+- CI security checks enabled (Semgrep, Bandit) in `.github/workflows/ci.yml`.
+- Ethics/Grounding content can be referenced by setting `ETHICS_FRAMEWORK_PATH` (folder of `.md/.txt/.json` files); loaded for grounding utilities.
+
 ## 📝 API Endpoints
 
 ### Create Agent
+
 ```http
 POST /agents
 Content-Type: application/json
@@ -175,6 +186,7 @@ Content-Type: application/json
 ```
 
 ### Invoke Agent
+
 ```http
 POST /agents/{agent_id}/invoke
 Content-Type: application/json
@@ -186,6 +198,7 @@ Content-Type: application/json
 ```
 
 ### Upload and Process Image
+
 ```http
 POST /agents/{agent_id}/process-image
 Content-Type: multipart/form-data
@@ -195,6 +208,7 @@ prompt: "What's in this image?"
 ```
 
 ### Upload and Process Audio
+
 ```http
 POST /agents/{agent_id}/process-audio
 Content-Type: multipart/form-data

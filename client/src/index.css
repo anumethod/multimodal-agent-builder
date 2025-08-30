@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom animations for sidebar */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes gentleBounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+.animate-slide-in {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.animate-slide-out {
+  animation: slideOutToLeft 0.3s ease-in;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+.animate-gentle-bounce {
+  animation: gentleBounce 2s infinite;
+}
+
+/* Enhanced hover effects */
+.sidebar-item-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-item-hover:hover {
+  transform: translateX(4px) translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Custom colors for the agent factory */
+  --success: hsl(142, 76%, 36%);
+  --warning: hsl(38, 92%, 50%);
+  --error: hsl(0, 84.2%, 60.2%);
+  --secure: hsl(142, 76%, 36%);
+  --alert: hsl(0, 84.2%, 60.2%);
+  --purple: hsl(262, 83%, 58%);
+  --blue: hsl(207, 90%, 54%);
+  --green: hsl(142, 76%, 36%);
+  --orange: hsl(38, 92%, 50%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+
+  /* Dark mode custom colors */
+  --success: hsl(142, 76%, 36%);
+  --warning: hsl(38, 92%, 50%);
+  --error: hsl(0, 62.8%, 30.6%);
+  --secure: hsl(142, 76%, 36%);
+  --alert: hsl(0, 62.8%, 30.6%);
+  --purple: hsl(262, 83%, 58%);
+  --blue: hsl(207, 90%, 54%);
+  --green: hsl(142, 76%, 36%);
+  --orange: hsl(38, 92%, 50%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-success {
+    color: var(--success);
+  }
+
+  .text-warning {
+    color: var(--warning);
+  }
+
+  .text-error {
+    color: var(--error);
+  }
+
+  .text-secure {
+    color: var(--secure);
+  }
+
+  .text-alert {
+    color: var(--alert);
+  }
+
+  .bg-success {
+    background-color: var(--success);
+  }
+
+  .bg-warning {
+    background-color: var(--warning);
+  }
+
+  .bg-error {
+    background-color: var(--error);
+  }
+
+  .bg-secure {
+    background-color: var(--secure);
+  }
+
+  .bg-alert {
+    background-color: var(--alert);
+  }
+
+  .bg-success\/10 {
+    background-color: hsl(142, 76%, 36%, 0.1);
+  }
+
+  .bg-warning\/10 {
+    background-color: hsl(38, 92%, 50%, 0.1);
+  }
+
+  .bg-error\/10 {
+    background-color: hsl(0, 84.2%, 60.2%, 0.1);
+  }
+
+  .bg-secure\/10 {
+    background-color: hsl(142, 76%, 36%, 0.1);
+  }
+
+  .bg-primary\/10 {
+    background-color: hsl(207, 90%, 54%, 0.1);
+  }
+
+  .bg-purple-100 {
+    background-color: hsl(262, 83%, 58%, 0.1);
+  }
+
+  .bg-blue-100 {
+    background-color: hsl(207, 90%, 54%, 0.1);
+  }
+
+  .bg-green-100 {
+    background-color: hsl(142, 76%, 36%, 0.1);
+  }
+
+  .bg-orange-100 {
+    background-color: hsl(38, 92%, 50%, 0.1);
+  }
+
+  .text-purple-600 {
+    color: hsl(262, 83%, 58%);
+  }
+
+  .text-blue-600 {
+    color: hsl(207, 90%, 54%);
+  }
+
+  .text-green-600 {
+    color: hsl(142, 76%, 36%);
+  }
+
+  .text-orange-600 {
+    color: hsl(38, 92%, 50%);
+  }
+
+  .border-primary {
+    border-color: var(--primary);
+  }
+
+  .hover\:border-primary:hover {
+    border-color: var(--primary);
+  }
+
+  .hover\:bg-primary\/5:hover {
+    background-color: hsl(207, 90%, 54%, 0.05);
+  }
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Focus styles for accessibility */
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--primary);
+}
+
+.focus\:border-primary:focus {
+  border-color: var(--primary);
+}
+
+/* WebSocket connection indicator */
+.ws-connected {
+  @apply bg-secure;
+}
+
+.ws-disconnected {
+  @apply bg-error;
+}
+
+.ws-connecting {
+  @apply bg-warning;
+}

@@ -16,6 +16,7 @@ from src.models.base_llm import BaseLLMClient, Message, MessageRole
 
 class MultimodalInput(BaseModel):
     """Multimodal input structure."""
+
     text: Optional[str] = Field(default=None, description="Text input")
     image: Optional[Union[str, bytes]] = Field(default=None, description="Image input")
     audio: Optional[Union[str, bytes]] = Field(default=None, description="Audio input")
@@ -24,6 +25,7 @@ class MultimodalInput(BaseModel):
 
 class MultimodalAgentConfig(AgentConfig):
     """Configuration for multimodal agent."""
+
     enable_vision: bool = Field(default=True, description="Enable vision processing")
     enable_audio: bool = Field(default=True, description="Enable audio processing")
     image_detail: str = Field(default="auto", description="Image detail level: low, high, auto")
@@ -33,7 +35,7 @@ class MultimodalAgentConfig(AgentConfig):
 
 class MultimodalAgent(BaseAgent):
     """Agent capable of handling text, image, and audio inputs."""
-    
+
     def __init__(
         self,
         config: Union[MultimodalAgentConfig, AgentConfig],
@@ -41,7 +43,7 @@ class MultimodalAgent(BaseAgent):
         tools: Optional[List[Any]] = None,
     ):
         """Initialize multimodal agent.
-        
+
         Args:
             config: Agent configuration
             llm_client: LLM client to use
@@ -57,26 +59,23 @@ class MultimodalAgent(BaseAgent):
 
         super().__init__(original_config, llm_client, tools)
         self.multimodal_config = mm_config
-        
+
         # Check LLM capabilities
-        self.vision_enabled = (
-            self.multimodal_config.enable_vision and 
-            llm_client.supports_vision
-        )
-        
+        self.vision_enabled = self.multimodal_config.enable_vision and llm_client.supports_vision
+
     async def think(
         self,
         input_data: Union[str, Dict[str, Any], MultimodalInput],
         context: Optional[List[Message]] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """Multimodal thinking process.
-        
+
         Args:
             input_data: Input to process (text, dict, or MultimodalInput)
             context: Optional context messages
             **kwargs: Additional parameters
-            
+
         Returns:
             Thought/reasoning output
         """
@@ -89,25 +88,24 @@ class MultimodalAgent(BaseAgent):
             multimodal_input = input_data
         else:
             raise ValueError(f"Unsupported input type: {type(input_data)}")
-        
+
         # Build thinking prompt
         thinking_prompt = self._build_thinking_prompt(multimodal_input)
-        
+
         # Prepare messages
         messages = []
-        if self.config.system_prompt:
-            messages.append(
-                Message(role=MessageRole.SYSTEM, content=self.config.system_prompt)
-            )
-        
+        sys_prompt = self._build_system_prompt()
+        if sys_prompt:
+            messages.append(Message(role=MessageRole.SYSTEM, content=sys_prompt))
+
         if context:
             messages.extend(context)
-        
+
         # Add the thinking prompt
         if multimodal_input.image and self.vision_enabled:
             # Create multimodal message
             content = [{"type": "text", "text": thinking_prompt}]
-            
+
             # Add image
             if isinstance(multimodal_input.image, str):
                 # File path
@@ -115,43 +113,42 @@ class MultimodalAgent(BaseAgent):
             else:
                 # Bytes
                 image_data = multimodal_input.image
-            
+
             image_base64 = base64.b64encode(image_data).decode("utf-8")
-            content.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:image/jpeg;base64,{image_base64}",
-                    "detail": self.multimodal_config.image_detail
+            content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{image_base64}",
+                        "detail": self.multimodal_config.image_detail,
+                    },
                 }
-            })
-            
+            )
+
             messages.append(Message(role=MessageRole.USER, content=content))
         else:
             messages.append(Message(role=MessageRole.USER, content=thinking_prompt))
-        
+
         # Generate thought
-        response = await self.llm_client.generate(
+        response = await self._stabilized_generate(
             messages,
             temperature=self.config.temperature,
             max_tokens=self.config.max_tokens,
-            **kwargs
+            **kwargs,
         )
-        
+
         return response.content if hasattr(response, "content") else str(response)
-    
+
     async def act(
-        self,
-        thought: str,
-        available_actions: Optional[List[Dict[str, Any]]] = None,
-        **kwargs
+        self, thought: str, available_actions: Optional[List[Dict[str, Any]]] = None, **kwargs
     ) -> Dict[str, Any]:
         """Select and execute action based on thought.
-        
+
         Args:
             thought: The agent's thought process
             available_actions: Optional list of available actions
             **kwargs: Additional parameters
-            
+
         Returns:
             Action result
         """
@@ -164,27 +161,19 @@ class MultimodalAgent(BaseAgent):
                     "type": "tool_execution",
                     "tool": action["tool"],
                     "parameters": action.get("parameters", {}),
-                    "result": result
+                    "result": result,
                 }
-        
+
         # Default action: generate response
-        return {
-            "type": "response_generation",
-            "thought": thought,
-            "action": "generate_response"
-        }
-    
-    async def observe(
-        self,
-        action_result: Dict[str, Any],
-        **kwargs
-    ) -> str:
+        return {"type": "response_generation", "thought": thought, "action": "generate_response"}
+
+    async def observe(self, action_result: Dict[str, Any], **kwargs) -> str:
         """Observe and interpret action result.
-        
+
         Args:
             action_result: Result from the action
             **kwargs: Additional parameters
-            
+
         Returns:
             Observation/final response
         """
@@ -193,38 +182,42 @@ class MultimodalAgent(BaseAgent):
             prompt = f"""
             Based on the following thought and action result, provide a clear response:
             
-            Thought: {action_result.get('thought', '')}
-            Tool: {action_result.get('tool', '')}
-            Result: {action_result.get('result', '')}
+            Thought: {action_result.get("thought", "")}
+            Tool: {action_result.get("tool", "")}
+            Result: {action_result.get("result", "")}
             
             Provide a helpful response to the user.
             """
-            
-            messages = [Message(role=MessageRole.USER, content=prompt)]
-            response = await self.llm_client.generate(
+
+            sys_prompt = self._build_system_prompt()
+            messages = []
+            if sys_prompt:
+                messages.append(Message(role=MessageRole.SYSTEM, content=sys_prompt))
+            messages.append(Message(role=MessageRole.USER, content=prompt))
+            response = await self._stabilized_generate(
                 messages,
                 temperature=self.config.temperature,
                 max_tokens=self.config.max_tokens,
-                **kwargs
+                **kwargs,
             )
             return response.content
-        
+
         # For response generation, return the thought as the observation
         return action_result.get("thought", "")
-    
+
     async def process_image(
         self,
         image: Union[str, bytes, Image.Image, np.ndarray],
         prompt: str = "What's in this image?",
-        **kwargs
+        **kwargs,
     ) -> AgentResponse:
         """Process an image with a prompt.
-        
+
         Args:
             image: Image to process
             prompt: Text prompt for the image
             **kwargs: Additional parameters
-            
+
         Returns:
             Agent response
         """
@@ -234,18 +227,22 @@ class MultimodalAgent(BaseAgent):
                 agent_name=self.config.name,
                 content="Vision processing is not enabled for this agent or model.",
                 state="error",
-                error="Vision not supported"
+                error="Vision not supported",
             )
-        
+
         try:
             # Prefer a generic generate() path so tests can mock it easily
-            messages = [Message(role=MessageRole.USER, content=prompt)]
+            sys_prompt = self._build_system_prompt()
+            messages = []
+            if sys_prompt:
+                messages.append(Message(role=MessageRole.SYSTEM, content=sys_prompt))
+            messages.append(Message(role=MessageRole.USER, content=prompt))
             resp = await self.llm_client.generate(
                 messages,
                 image=image,
                 temperature=self.config.temperature,
                 max_tokens=self.config.max_tokens,
-                **kwargs
+                **kwargs,
             )
 
             # Normalize response to a simple content string and optional usage
@@ -254,13 +251,9 @@ class MultimodalAgent(BaseAgent):
 
             # Update memory if enabled
             if self.memory:
-                self.memory.add_to_short_term(
-                    Message(role=MessageRole.USER, content=prompt)
-                )
-                self.memory.add_to_short_term(
-                    Message(role=MessageRole.ASSISTANT, content=content)
-                )
-            
+                self.memory.add_to_short_term(Message(role=MessageRole.USER, content=prompt))
+                self.memory.add_to_short_term(Message(role=MessageRole.ASSISTANT, content=content))
+
             return AgentResponse(
                 agent_id=self.id,
                 agent_name=self.config.name,
@@ -270,57 +263,50 @@ class MultimodalAgent(BaseAgent):
                     "modality": "image",
                     "prompt": prompt,
                     "agent_id": self.id,
-                }
+                },
             )
-            
+
         except Exception as e:
             return AgentResponse(
                 agent_id=self.id,
                 agent_name=self.config.name,
                 content=f"Error processing image: {str(e)}",
                 state="error",
-                error=str(e)
+                error=str(e),
             )
-    
+
     async def process_audio(
-        self,
-        audio: Union[str, bytes],
-        task: str = "transcribe",
-        **kwargs
+        self, audio: Union[str, bytes], task: str = "transcribe", **kwargs
     ) -> AgentResponse:
         """Process audio input.
-        
+
         Args:
             audio: Audio to process (file path or bytes)
             task: Task to perform (transcribe, translate, analyze)
             **kwargs: Additional parameters
-            
+
         Returns:
             Agent response
         """
         # Note: Audio processing would typically require additional services
         # like OpenAI's Whisper API or Google's Speech-to-Text
         # This is a placeholder implementation
-        
+
         return AgentResponse(
             agent_id=self.id,
             agent_name=self.config.name,
             content="Audio processed",
             metadata={"modality": "audio", "task": task},
-            state="completed"
+            state="completed",
         )
-    
-    async def process_multimodal(
-        self,
-        inputs: MultimodalInput,
-        **kwargs
-    ) -> AgentResponse:
+
+    async def process_multimodal(self, inputs: MultimodalInput, **kwargs) -> AgentResponse:
         """Process multiple modalities simultaneously.
-        
+
         Args:
             inputs: Multimodal inputs
             **kwargs: Additional parameters
-            
+
         Returns:
             Agent response
         """
@@ -329,106 +315,102 @@ class MultimodalAgent(BaseAgent):
             response = await self.run(inputs, **kwargs)
             response.metadata["modality"] = "multimodal"
             response.metadata["modalities_used"] = []
-            
+
             if inputs.text:
                 response.metadata["modalities_used"].append("text")
             if inputs.image:
                 response.metadata["modalities_used"].append("image")
             if inputs.audio:
                 response.metadata["modalities_used"].append("audio")
-            
+
             return response
-            
+
         except Exception as e:
             return AgentResponse(
                 agent_id=self.id,
                 agent_name=self.config.name,
                 content=f"Error in multimodal processing: {str(e)}",
                 state="error",
-                error=str(e)
+                error=str(e),
             )
-    
+
     def _build_thinking_prompt(self, inputs: MultimodalInput) -> str:
         """Build a thinking prompt from multimodal inputs.
-        
+
         Args:
             inputs: Multimodal inputs
-            
+
         Returns:
             Thinking prompt
         """
         prompt_parts = []
-        
+
         if self.multimodal_config.multimodal_reasoning:
             prompt_parts.append("Analyze the following inputs:")
-        
+
         if inputs.text:
             prompt_parts.append(f"Text: {inputs.text}")
-        
+
         if inputs.image:
             prompt_parts.append("Image: [Image provided]")
             if self.multimodal_config.multimodal_reasoning:
                 prompt_parts.append("Please analyze the image content.")
-        
+
         if inputs.audio:
             prompt_parts.append("Audio: [Audio provided]")
             if self.multimodal_config.multimodal_reasoning:
                 prompt_parts.append("Note: Audio processing requires transcription.")
-        
+
         if inputs.metadata:
             prompt_parts.append(f"Additional context: {json.dumps(inputs.metadata)}")
-        
+
         if self.multimodal_config.multimodal_reasoning:
             prompt_parts.append("\nProvide a comprehensive analysis considering all inputs.")
-        
+
         return "\n".join(prompt_parts)
-    
-    async def _select_tool_action(
-        self,
-        thought: str,
-        tools: List[Any]
-    ) -> Optional[Dict[str, Any]]:
+
+    async def _select_tool_action(self, thought: str, tools: List[Any]) -> Optional[Dict[str, Any]]:
         """Select appropriate tool based on thought.
-        
+
         Args:
             thought: Agent's thought
             tools: Available tools
-            
+
         Returns:
             Selected action or None
         """
         # This would typically use the LLM to select the appropriate tool
         # For now, returning None to use default action
         return None
-    
+
     async def _execute_tool(self, action: Dict[str, Any]) -> Any:
         """Execute a selected tool.
-        
+
         Args:
             action: Tool action to execute
-            
+
         Returns:
             Tool execution result
         """
         # Placeholder for tool execution
         # Would integrate with LangChain tools or custom implementations
         return f"Executed {action.get('tool', 'unknown')} tool"
-    
+
     def _load_image_file(self, path: str) -> bytes:
         """Load image file as bytes.
-        
+
         Args:
             path: Path to image file
-            
+
         Returns:
             Image bytes
         """
         with open(path, "rb") as f:
             return f.read()
-    
+
     def get_capabilities(self) -> Dict[str, bool]:
         """Get agent capabilities.
-        
+
         Returns:
             Dictionary of capabilities
         """
@@ -439,5 +421,5 @@ class MultimodalAgent(BaseAgent):
             "streaming": self.llm_client.supports_streaming,
             "functions": self.llm_client.supports_functions and self.config.enable_tools,
             "memory": self.config.enable_memory,
-            "multimodal_reasoning": self.multimodal_config.multimodal_reasoning
+            "multimodal_reasoning": self.multimodal_config.multimodal_reasoning,
         }

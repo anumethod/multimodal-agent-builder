@@ -1,10 +1,12 @@
 from pathlib import Path
 
+
 class DatasetManager:
     """
     Central interface for accessing train, validation, and test dataset splits in the project.
     Handles resolved file paths, loading, and (optionally) application-specific adaptors.
     """
+
     def __init__(self, dataset_root: str = "train-test-validate"):
         self.root = Path(dataset_root)
 

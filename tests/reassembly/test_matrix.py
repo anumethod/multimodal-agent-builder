@@ -9,6 +9,7 @@ DATA_KINDS = ["testing", "training", "validation"]
 FIXTURE_BASE = "train-test-validate/chunks/fixtures"
 REASSEMBLY_SCRIPT = "scripts/reassemble_files.sh"
 
+
 @pytest.mark.parametrize("kind", DATA_KINDS)
 def test_reassembly_kind(tmp_path, kind):
     """
@@ -20,13 +21,12 @@ def test_reassembly_kind(tmp_path, kind):
         pytest.skip(f"No fixture data for kind {kind} (directory {fixtures_dir} missing)")
 
     # Call the reassembly script (dry run so nothing is overwritten)
-    result = subprocess.run([
-        "bash", REASSEMBLY_SCRIPT,
-        "--kind", kind,
-        "--verbose"
-    ], capture_output=True, text=True)
+    result = subprocess.run(
+        ["bash", REASSEMBLY_SCRIPT, "--kind", kind, "--verbose"], capture_output=True, text=True
+    )
     assert result.returncode == 0, f"Reassembly failed ({kind}): {result.stderr or result.stdout}"
     # Optionally validate produced output/checksum here
+
 
 # Optionally, extend with BAD_HOSTILE_FIXTUREs or corruption tests if you want
 # to simulate errors/missing chunks for negative coverage.
@@ -35,4 +35,3 @@ def test_reassembly_kind(tmp_path, kind):
 
 # You can run these tests via:
 #   pytest tests/reassembly/test_matrix.py
-

@@ -42,7 +42,7 @@ def mock_settings(monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-anthropic-key")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini-key")
     monkeypatch.setenv("APP_ENV", "development")  # Use valid environment
-    
+
     settings = Settings()
     return settings
 
@@ -52,9 +52,7 @@ def mock_llm_client():
     """Create a mock LLM client."""
     client = AsyncMock(spec=BaseLLMClient)
     client.generate.return_value = LLMResponse(
-        content="Test response",
-        model="test-model",
-        usage={"total_tokens": 10}
+        content="Test response", model="test-model", usage={"total_tokens": 10}
     )
     client.generate_stream = AsyncMock()
     client.count_tokens.return_value = 10
@@ -67,19 +65,16 @@ def mock_llm_client():
 def mock_agent(mock_llm_client):
     """Create a mock agent."""
     config = AgentConfig(
-        name="TestAgent",
-        description="Test agent",
-        model_provider="test",
-        model="test-model"
+        name="TestAgent", description="Test agent", model_provider="test", model="test-model"
     )
-    
+
     agent = Mock(spec=BaseAgent)
     agent.config = config
     agent.llm_client = mock_llm_client
     agent.id = "test-agent-id"
     agent.chat = AsyncMock(return_value={"content": "Test response"})
     agent.run = AsyncMock(return_value={"content": "Test response"})
-    
+
     return agent
 
 
@@ -87,14 +82,14 @@ def mock_agent(mock_llm_client):
 def sample_image_data():
     """Provide sample image data for testing."""
     # Create a small 1x1 pixel PNG
-    return b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01UU\x86\x18\x00\x00\x00\x00IEND\xaeB`\x82'
+    return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01UU\x86\x18\x00\x00\x00\x00IEND\xaeB`\x82"
 
 
 @pytest.fixture
 def sample_audio_data():
     """Provide sample audio data for testing."""
     # Create a minimal WAV header + data
-    return b'RIFF$\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00D\xac\x00\x00\x88X\x01\x00\x02\x00\x10\x00data\x00\x00\x00\x00'
+    return b"RIFF$\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00D\xac\x00\x00\x88X\x01\x00\x02\x00\x10\x00data\x00\x00\x00\x00"
 
 
 @pytest.fixture
@@ -104,13 +99,13 @@ def sample_training_data():
         {
             "image_id": "test_001",
             "caption": "A cat sitting on a mat",
-            "url": "http://example.com/image1.jpg"
+            "url": "http://example.com/image1.jpg",
         },
         {
-            "image_id": "test_002", 
+            "image_id": "test_002",
             "caption": "A dog playing in the park",
-            "url": "http://example.com/image2.jpg"
-        }
+            "url": "http://example.com/image2.jpg",
+        },
     ]
 
 
@@ -125,18 +120,11 @@ def mock_openai_response():
         "choices": [
             {
                 "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": "This is a test response from OpenAI"
-                },
-                "finish_reason": "stop"
+                "message": {"role": "assistant", "content": "This is a test response from OpenAI"},
+                "finish_reason": "stop",
             }
         ],
-        "usage": {
-            "prompt_tokens": 10,
-            "completion_tokens": 20,
-            "total_tokens": 30
-        }
+        "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
     }
 
 
@@ -147,19 +135,17 @@ def mock_gemini_response():
         "candidates": [
             {
                 "content": {
-                    "parts": [
-                        {"text": "This is a test response from Gemini"}
-                    ],
-                    "role": "model"
+                    "parts": [{"text": "This is a test response from Gemini"}],
+                    "role": "model",
                 },
-                "finishReason": "STOP"
+                "finishReason": "STOP",
             }
         ],
         "usageMetadata": {
             "promptTokenCount": 10,
             "candidatesTokenCount": 20,
-            "totalTokenCount": 30
-        }
+            "totalTokenCount": 30,
+        },
     }
 
 
@@ -170,18 +156,10 @@ def mock_anthropic_response():
         "id": "msg_test",
         "type": "message",
         "role": "assistant",
-        "content": [
-            {
-                "type": "text",
-                "text": "This is a test response from Claude"
-            }
-        ],
+        "content": [{"type": "text", "text": "This is a test response from Claude"}],
         "model": "claude-3-opus-20240229",
         "stop_reason": "end_turn",
-        "usage": {
-            "input_tokens": 10,
-            "output_tokens": 20
-        }
+        "usage": {"input_tokens": 10, "output_tokens": 20},
     }
 
 
@@ -190,7 +168,7 @@ async def async_client():
     """Create an async test client for FastAPI."""
     from httpx import AsyncClient
     from src.main import app
-    
+
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 
@@ -208,15 +186,13 @@ def mock_file_upload():
     """Create a mock file upload object."""
     from fastapi import UploadFile
     from io import BytesIO
-    
-    def _create_upload(filename: str, content: bytes, content_type: str = "application/octet-stream"):
-        file = UploadFile(
-            filename=filename,
-            file=BytesIO(content),
-            content_type=content_type
-        )
+
+    def _create_upload(
+        filename: str, content: bytes, content_type: str = "application/octet-stream"
+    ):
+        file = UploadFile(filename=filename, file=BytesIO(content), content_type=content_type)
         return file
-    
+
     return _create_upload
 
 
@@ -236,6 +212,7 @@ def cleanup_agents():
     yield
     # Clear any global agent storage
     from src.main import agent_store
+
     agent_store.clear()
 
 
@@ -250,17 +227,14 @@ def cleanup_env(monkeypatch):
 @pytest.fixture
 def mock_external_apis():
     """Mock all external API calls."""
-    with patch("openai.OpenAI") as mock_openai, \
-         patch("google.generativeai.GenerativeModel") as mock_gemini, \
-         patch("anthropic.Anthropic") as mock_anthropic:
-        
+    with (
+        patch("openai.OpenAI") as mock_openai,
+        patch("google.generativeai.GenerativeModel") as mock_gemini,
+        patch("anthropic.Anthropic") as mock_anthropic,
+    ):
         # Configure mocks
         mock_openai.return_value.chat.completions.create = AsyncMock()
         mock_gemini.return_value.generate_content = AsyncMock()
         mock_anthropic.return_value.messages.create = AsyncMock()
-        
-        yield {
-            "openai": mock_openai,
-            "gemini": mock_gemini,
-            "anthropic": mock_anthropic
-        }
+
+        yield {"openai": mock_openai, "gemini": mock_gemini, "anthropic": mock_anthropic}
