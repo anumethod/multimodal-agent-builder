@@ -299,7 +299,7 @@ class AuditLogger {
 
     const alertMessage = `CRITICAL SECURITY EVENT: ${auditEntry.action} on ${auditEntry.resource} by ${auditEntry.userId}`;
 
-    console.error('🚨 SECURITY ALERT:', alertMessage);
+    console.error(' SECURITY ALERT:', alertMessage);
 
     // Here you would integrate with:
     // - Email/SMS alerting systems

@@ -6,11 +6,11 @@ labels: 'bug'
 assignees: ''
 ---
 
-## 🐛 Bug Description
+##  Bug Description
 
 _A clear and concise description of what the bug is._
 
-## 📋 To Reproduce
+##  To Reproduce
 
 Steps to reproduce the behavior:
 
@@ -19,11 +19,11 @@ Steps to reproduce the behavior:
 3. Pass input '...'
 4. See error
 
-## 🎯 Expected Behavior
+##  Expected Behavior
 
 _A clear and concise description of what you expected to happen._
 
-## 📸 Screenshots/Logs
+##  Screenshots/Logs
 
 _If applicable, add screenshots or error logs to help explain your problem._
 
@@ -35,7 +35,7 @@ _If applicable, add screenshots or error logs to help explain your problem._
 # Error message or stack trace
 ```
 
-## 🖥️ Environment
+##  Environment
 
 Please complete the following information:
 
@@ -45,7 +45,7 @@ Please complete the following information:
 - **LLM Provider:** [e.g. OpenAI, Gemini, Claude]
 - **Installation Method:** [pip, poetry, from source]
 
-## 📦 Dependencies
+##  Dependencies
 
 Run `pip freeze | grep -E "(openai|anthropic|google|langchain|fastapi)"` and paste output:
 
@@ -53,7 +53,7 @@ Run `pip freeze | grep -E "(openai|anthropic|google|langchain|fastapi)"` and pas
 # Paste dependency versions here
 ```
 
-## 🔍 Additional Context
+##  Additional Context
 
 _Add any other context about the problem here. This might include:_
 
@@ -62,7 +62,7 @@ _Add any other context about the problem here. This might include:_
 - Impact on your use case
 - Frequency of occurrence (always, intermittent, only under specific conditions)
 
-## ✅ Checklist
+##  Checklist
 
 - [ ] I have searched for similar issues and didn't find a duplicate
 - [ ] I have read the documentation and this is not expected behavior

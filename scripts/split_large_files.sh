@@ -67,7 +67,7 @@ if [ -f "train-test-validate/ML-Validation/open_images_validation_localized_narr
 fi
 
 echo ""
-echo "✅ Splitting complete!"
+echo " Splitting complete!"
 echo ""
 echo "Large files have been split into chunks in train-test-validate/chunks/"
 echo "You can now remove the original large files from git and add the chunks instead."

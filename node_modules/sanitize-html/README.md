@@ -182,7 +182,14 @@ selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', '
 // URL schemes we permit
 allowedSchemes: [ 'http', 'https', 'ftp', 'mailto', 'tel' ],
 allowedSchemesByTag: {},
-allowedSchemesAppliedToAttributes: [ 'href', 'src', 'cite' ],
+allowedSchemesAppliedToAttributes: [
+  'href', 'src', 'cite',
+  'action', 'formaction', 'data', 'xlink:href',
+  'poster', 'background', 'ping',
+  'longdesc', 'usemap', 'codebase', 'classid', 'archive',
+  'profile', 'manifest', 'itemid',
+  'dynsrc', 'lowsrc'
+],
 allowProtocolRelative: true,
 enforceHtmlBoundary: false,
 parseStyleAttributes: true
@@ -695,13 +702,13 @@ Normally, with a few exceptions, if a tag is not allowed, all of the text within
 
 The exceptions are:
 
-`style`, `script`, `textarea`, `option`
+`style`, `script`, `textarea`, `option`, `xmp`
 
 If you wish to replace this list, for instance to discard whatever is found
 inside a `noscript` tag, use the `nonTextTags` option:
 
 ```js
-nonTextTags: [ 'style', 'script', 'textarea', 'option', 'noscript' ]
+nonTextTags: [ 'style', 'script', 'textarea', 'option', 'xmp', 'noscript' ]
 ```
 
 Note that if you use this option you are responsible for stating the entire list. This gives you the power to retain the content of `textarea`, if you want to.

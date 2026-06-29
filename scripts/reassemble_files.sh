@@ -158,7 +158,7 @@ reassemble_file() {
     local manifest_dir=$(dirname "$manifest_file")
     local manifest_basename=$(basename "$manifest_file" .manifest)
     
-    print_message "$BLUE" "\n📦 Processing: $manifest_basename"
+    print_message "$BLUE" "\n Processing: $manifest_basename"
     
     # Parse manifest
     IFS='|' read -r original_file original_size original_md5 chunks_str <<< "$(parse_manifest "$manifest_file")"
@@ -175,20 +175,20 @@ reassemble_file() {
     
     # Check if output file already exists
     if [ -f "$output_file" ] && [ "$FORCE" = false ] && [ "$DRY_RUN" = false ]; then
-        print_message "$YELLOW" "  ⚠️  File already exists: $output_file"
+        print_message "$YELLOW" "    File already exists: $output_file"
         
         # Calculate MD5 of existing file
         local existing_md5=$(calculate_md5 "$output_file")
         if [ "$existing_md5" = "$original_md5" ]; then
-            print_message "$GREEN" "  ✅ Existing file has correct checksum. Skipping."
+            print_message "$GREEN" "   Existing file has correct checksum. Skipping."
             ((SKIPPED_FILES++))
             return 0
         else
-            print_message "$YELLOW" "  ⚠️  Existing file has different checksum!"
+            print_message "$YELLOW" "    Existing file has different checksum!"
             read -p "  Overwrite? (y/N): " -n 1 -r
             echo
             if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                print_message "$YELLOW" "  ⏭️  Skipping file"
+                print_message "$YELLOW" "  ⏭  Skipping file"
                 ((SKIPPED_FILES++))
                 return 0
             fi
@@ -210,7 +210,7 @@ reassemble_file() {
     mkdir -p "$output_dir"
     
     # Reassemble chunks
-    print_message "$BLUE" "  📂 Reassembling ${#chunks[@]} chunks..."
+    print_message "$BLUE" "   Reassembling ${#chunks[@]} chunks..."
     
     # Remove existing file if forcing
     if [ -f "$output_file" ]; then
@@ -223,7 +223,7 @@ reassemble_file() {
         local chunk_path="${manifest_dir}/${chunk}"
         
         if [ ! -f "$chunk_path" ]; then
-            print_message "$RED" "  ❌ ERROR: Chunk not found: $chunk_path"
+            print_message "$RED" "   ERROR: Chunk not found: $chunk_path"
             ((FAILED_FILES++))
             return 1
         fi
@@ -233,7 +233,7 @@ reassemble_file() {
         
         ((chunk_count++))
         if [ "$VERBOSE" = false ]; then
-            printf "\r  📂 Progress: %d/%d chunks" "$chunk_count" "${#chunks[@]}"
+            printf "\r   Progress: %d/%d chunks" "$chunk_count" "${#chunks[@]}"
         fi
     done
     
@@ -244,7 +244,7 @@ reassemble_file() {
     # Verify file size
     local actual_size=$(stat -f%z "$output_file" 2>/dev/null || stat -c%s "$output_file" 2>/dev/null)
     if [ "$actual_size" != "$original_size" ]; then
-        print_message "$RED" "  ❌ ERROR: Size mismatch! Expected: $original_size, Got: $actual_size"
+        print_message "$RED" "   ERROR: Size mismatch! Expected: $original_size, Got: $actual_size"
         ((FAILED_FILES++))
         return 1
     fi
@@ -252,29 +252,29 @@ reassemble_file() {
     verbose_print "  Size verification passed"
     
     # Verify checksum
-    print_message "$BLUE" "  🔍 Verifying checksum..."
+    print_message "$BLUE" "   Verifying checksum..."
     local actual_md5=$(calculate_md5 "$output_file")
     
     if [ "$actual_md5" != "$original_md5" ]; then
-        print_message "$RED" "  ❌ ERROR: Checksum mismatch!"
+        print_message "$RED" "   ERROR: Checksum mismatch!"
         print_message "$RED" "     Expected: $original_md5"
         print_message "$RED" "     Got:      $actual_md5"
         ((FAILED_FILES++))
         return 1
     fi
     
-    print_message "$GREEN" "  ✅ Successfully reassembled: $(format_size $actual_size)"
+    print_message "$GREEN" "   Successfully reassembled: $(format_size $actual_size)"
     ((PROCESSED_FILES++))
     
     # Cleanup chunks if requested
     if [ "$CLEANUP" = true ]; then
-        print_message "$YELLOW" "  🧹 Removing chunk files..."
+        print_message "$YELLOW" "   Removing chunk files..."
         for chunk in "${chunks[@]}"; do
             local chunk_path="${manifest_dir}/${chunk}"
             rm -f "$chunk_path"
             verbose_print "     Removed: $chunk"
         done
-        print_message "$GREEN" "  ✅ Chunks removed"
+        print_message "$GREEN" "   Chunks removed"
     fi
     
     return 0
@@ -327,22 +327,22 @@ if [[ ! "$KIND" =~ ^(all|testing|training|validation)$ ]]; then
 fi
 
 # Main execution
-print_message "$GREEN" "════════════════════════════════════════════════════════════════"
+print_message "$GREEN" ""
 print_message "$GREEN" "                Dataset File Reassembly Script                  "
-print_message "$GREEN" "════════════════════════════════════════════════════════════════"
+print_message "$GREEN" ""
 
 if [ "$DRY_RUN" = true ]; then
-    print_message "$YELLOW" "🔍 DRY RUN MODE - No files will be modified"
+    print_message "$YELLOW" " DRY RUN MODE - No files will be modified"
 fi
 
 # Check if chunks directory exists
 if [ ! -d "$CHUNKS_DIR" ]; then
-    print_message "$RED" "❌ ERROR: Chunks directory not found: $CHUNKS_DIR"
+    print_message "$RED" " ERROR: Chunks directory not found: $CHUNKS_DIR"
     exit 1
 fi
 
 # Find all manifest files for specific kind
-print_message "$BLUE" "\n📋 Searching for manifest files..."
+print_message "$BLUE" "\n Searching for manifest files..."
 manifest_files=()
 case "$KIND" in
   testing)
@@ -360,12 +360,12 @@ for mf in $manifest_glob; do
 done
 
 if [ ${#manifest_files[@]} -eq 0 ]; then
-    print_message "$YELLOW" "⚠️  No manifest files found in $CHUNKS_DIR for kind $KIND"
+    print_message "$YELLOW" "  No manifest files found in $CHUNKS_DIR for kind $KIND"
     exit 0
 fi
 
 TOTAL_FILES=${#manifest_files[@]}
-print_message "$GREEN" "📊 Found $TOTAL_FILES manifest file(s) to process (kind: $KIND)"
+print_message "$GREEN" " Found $TOTAL_FILES manifest file(s) to process (kind: $KIND)"
 
 # Process each manifest file
 for manifest_file in "${manifest_files[@]}"; do
@@ -373,35 +373,35 @@ for manifest_file in "${manifest_files[@]}"; do
 done
 
 # Print summary
-print_message "$GREEN" "\n════════════════════════════════════════════════════════════════"
+print_message "$GREEN" "\n"
 print_message "$GREEN" "                         Summary                                "
-print_message "$GREEN" "════════════════════════════════════════════════════════════════"
-print_message "$BLUE" "📊 Total manifests:    $TOTAL_FILES"
-print_message "$GREEN" "✅ Successfully reassembled: $PROCESSED_FILES"
+print_message "$GREEN" ""
+print_message "$BLUE" " Total manifests:    $TOTAL_FILES"
+print_message "$GREEN" " Successfully reassembled: $PROCESSED_FILES"
 
 if [ $SKIPPED_FILES -gt 0 ]; then
-    print_message "$YELLOW" "⏭️  Skipped (already exist): $SKIPPED_FILES"
+    print_message "$YELLOW" "⏭  Skipped (already exist): $SKIPPED_FILES"
 fi
 
 if [ $FAILED_FILES -gt 0 ]; then
-    print_message "$RED" "❌ Failed:             $FAILED_FILES"
+    print_message "$RED" " Failed:             $FAILED_FILES"
 fi
 
 # Exit with appropriate code
 if [ $FAILED_FILES -gt 0 ]; then
-    print_message "$RED" "\n⚠️  Some files failed to reassemble. Check the errors above."
+    print_message "$RED" "\n  Some files failed to reassemble. Check the errors above."
     exit 1
 else
-    print_message "$GREEN" "\n🎉 All operations completed successfully!"
+    print_message "$GREEN" "\n All operations completed successfully!"
     
     if [ "$CLEANUP" = false ] && [ "$DRY_RUN" = false ]; then
-        print_message "$BLUE" "\n💡 Tip: Run with -c flag to remove chunk files after reassembly"
+        print_message "$BLUE" "\n Tip: Run with -c flag to remove chunk files after reassembly"
     fi
 fi
 
 # Show location of reassembled files
 if [ $PROCESSED_FILES -gt 0 ] && [ "$DRY_RUN" = false ]; then
-    print_message "$BLUE" "\n📁 Reassembled files are located in:"
+    print_message "$BLUE" "\n Reassembled files are located in:"
     print_message "$BLUE" "   • ${OUTPUT_BASE}/ML-Testing/"
     print_message "$BLUE" "   • ${OUTPUT_BASE}/ML-Training/"
     print_message "$BLUE" "   • ${OUTPUT_BASE}/ML-Validation/"

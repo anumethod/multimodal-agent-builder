@@ -10,17 +10,17 @@ GitHub has a 100MB file size limit. Our training and test datasets exceed this l
 
 ```
 chunks/
-├── ML-Testing/
-│   ├── open_images_test_asr.jsonl.part_* (3 chunks)
-│   ├── open_images_test_localized_narratives.jsonl.part_* (38 chunks)
-│   └── *.manifest (checksums and metadata)
-├── ML-Training/
-│   ├── open_images_train_v6_asr.jsonl.part_* (11 chunks)
-│   ├── open_images_train_v6_localized_narratives-00009-of-00010.jsonl.part_* (18 chunks)
-│   └── *.manifest (checksums and metadata)
-└── ML-Validation/
-    ├── open_images_validation_localized_narratives.jsonl.part_* (13 chunks)
-    └── *.manifest (checksums and metadata)
+ ML-Testing/
+    open_images_test_asr.jsonl.part_* (3 chunks)
+    open_images_test_localized_narratives.jsonl.part_* (38 chunks)
+    *.manifest (checksums and metadata)
+ ML-Training/
+    open_images_train_v6_asr.jsonl.part_* (11 chunks)
+    open_images_train_v6_localized_narratives-00009-of-00010.jsonl.part_* (18 chunks)
+    *.manifest (checksums and metadata)
+ ML-Validation/
+     open_images_validation_localized_narratives.jsonl.part_* (13 chunks)
+     *.manifest (checksums and metadata)
 ```
 
 ## How to Reassemble Files

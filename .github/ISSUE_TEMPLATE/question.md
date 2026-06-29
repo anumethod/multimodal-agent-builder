@@ -6,11 +6,11 @@ labels: 'question'
 assignees: ''
 ---
 
-## ❓ Question
+##  Question
 
 _What would you like to know or discuss?_
 
-## 📖 Context
+##  Context
 
 _Provide relevant context to help others understand your question:_
 
@@ -26,25 +26,25 @@ _List any approaches you've already attempted._
 
 _Link to any relevant documentation you've consulted._
 
-## 💻 Code Example (if applicable)
+##  Code Example (if applicable)
 
 ```python
 # Relevant code snippet
 ```
 
-## 🤔 Specific Questions
+##  Specific Questions
 
 1. Question 1?
 2. Question 2?
 3. Question 3?
 
-## 📚 Additional Information
+##  Additional Information
 
 - **Environment:** [e.g., Python 3.10, Ubuntu]
 - **Package Version:** [e.g., 0.1.0]
 - **Related Issues:** [Link any related issues]
 
-## ✅ Checklist
+##  Checklist
 
 - [ ] I have searched existing issues and discussions
 - [ ] I have read the documentation

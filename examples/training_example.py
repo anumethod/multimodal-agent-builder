@@ -156,12 +156,12 @@ async def demo_training_workflow():
     client = TrainingAPIClient()
     agent_name = "vision_agent_v1"
 
-    print("🚀 Training API Demo")
+    print(" Training API Demo")
     print("=" * 50)
 
     try:
         # 1. List available datasets
-        print("\n📊 Available Datasets:")
+        print("\n Available Datasets:")
         datasets = client.list_datasets()
         for dataset_name, info in datasets["datasets"].items():
             print(f"  - {dataset_name}: {info['description']}")
@@ -169,13 +169,13 @@ async def demo_training_workflow():
             print(f"    Validation files: {len(info['validation_files'])}")
 
         # 2. Start training
-        print(f"\n🎯 Starting training for {agent_name}...")
+        print(f"\n Starting training for {agent_name}...")
         result = client.start_training(agent_name=agent_name, dataset_type="open_images", epochs=3)
         print(f"  Status: {result['status']}")
         print(f"  Message: {result['message']}")
 
         # 3. Monitor training progress
-        print("\n📈 Monitoring training progress...")
+        print("\n Monitoring training progress...")
         for i in range(5):
             await asyncio.sleep(2)  # Wait 2 seconds
             status = client.check_training_status(agent_name)
@@ -188,7 +188,7 @@ async def demo_training_workflow():
                 break
 
         # 4. Log a manual closure
-        print("\n🔒 Logging manual loop closure...")
+        print("\n Logging manual loop closure...")
         closure_result = client.log_closure(
             hypothesis="Manual testing confirms pattern recognition",
             pattern="Consistent object detection in images",
@@ -200,7 +200,7 @@ async def demo_training_workflow():
         print(f"  Total loops: {closure_result['total_loops']}")
 
         # 5. Get training ledger
-        print("\n📜 Training Ledger:")
+        print("\n Training Ledger:")
         ledger = client.get_ledger(agent_name)
         print(f"  Total loops closed: {ledger['total_loops']}")
         print(f"  Closure rate: {ledger['closure_rate']:.2%}")
@@ -211,14 +211,14 @@ async def demo_training_workflow():
                 print(f"    - {loop['Loop ID']}: {loop['Topic']}")
 
         # 6. Get comprehensive summary
-        print("\n📋 Training Summary:")
+        print("\n Training Summary:")
         summary = client.get_summary(agent_name)
         print(f"  Total iterations: {summary['total_iterations']}")
         print(f"  Loops closed: {summary['loops_closed']}")
         print(f"  Patterns discovered: {summary['patterns_discovered']}")
 
         # 7. Create a pipeline (alternative workflow)
-        print("\n🔧 Creating training pipeline for new agent...")
+        print("\n Creating training pipeline for new agent...")
         pipeline_agent = "vision_agent_v2"
         pipeline_result = client.create_pipeline(
             agent_name=pipeline_agent, dataset_type="open_images"
@@ -227,18 +227,18 @@ async def demo_training_workflow():
         print(f"  Message: {pipeline_result['message']}")
 
         # Clean up
-        print("\n🧹 Cleaning up...")
+        print("\n Cleaning up...")
         client.reset_training(agent_name)
         client.reset_training(pipeline_agent)
         print("  Training reset complete")
 
     except requests.exceptions.RequestException as e:
-        print(f"\n❌ API Error: {e}")
+        print(f"\n API Error: {e}")
         print("Make sure the API server is running!")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n Error: {e}")
 
-    print("\n✅ Training demo complete!")
+    print("\n Training demo complete!")
 
 
 def demo_closure_tracking():
@@ -246,7 +246,7 @@ def demo_closure_tracking():
 
     client = TrainingAPIClient()
 
-    print("🔄 Recursive Loop Closure Demo")
+    print(" Recursive Loop Closure Demo")
     print("=" * 50)
 
     # Define test closures
@@ -274,12 +274,12 @@ def demo_closure_tracking():
         },
     ]
 
-    print("\n📝 Logging test closures...")
+    print("\n Logging test closures...")
     for closure in test_closures:
         result = client.log_closure(**closure)
-        print(f"  ✓ {closure['topic']}: {result['loop_id']}")
+        print(f"   {closure['topic']}: {result['loop_id']}")
 
-    print("\n🎯 Closures logged successfully!")
+    print("\n Closures logged successfully!")
 
 
 if __name__ == "__main__":

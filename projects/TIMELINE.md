@@ -1,4 +1,4 @@
-# 📅 Multimodal Agent Builder Project Timeline
+#  Multimodal Agent Builder Project Timeline
 
 ## 2025 Q3 (July - September)
 
@@ -49,7 +49,7 @@
 
 ---
 
-## 🎯 Key Milestones
+##  Key Milestones
 
 | Milestone              | Target Date  | Success Criteria                                       |
 | ---------------------- | ------------ | ------------------------------------------------------ |

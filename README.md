@@ -6,23 +6,23 @@ A sophisticated, provider-agnostic API platform for creating, managing, and orch
 
 ---
 
-## 🎯 What is Multimodal Agent Builder?
+##  What is Multimodal Agent Builder?
 
 **Multimodal Agent Builder** solves the critical challenge of building intelligent, multimodal AI applications without getting locked into a single LLM provider. It provides:
 
-- **🔄 Unified API** across OpenAI GPT-4, Google Gemini 2.5, and Anthropic Claude-3
-- **🧠 Multiple Agent Types** optimized for different use cases (conversational AI, coding, data analysis, safety monitoring)
-- **💾 Sophisticated Memory Systems** with short-term, long-term, episodic, and semantic memory
-- **🎨 True Multimodal Processing** for simultaneous text, image, and audio understanding
-- **🔧 Tool Integration** via LangChain with ReAct workflow support
-- **📊 Advanced Training** with recursive loop closure detection for continuous improvement
-- **🚀 Production-Ready** with rate limiting, distributed tracing, security features, and async architecture
+- ** Unified API** across OpenAI GPT-4, Google Gemini 2.5, and Anthropic Claude-3
+- ** Multiple Agent Types** optimized for different use cases (conversational AI, coding, data analysis, safety monitoring)
+- ** Sophisticated Memory Systems** with short-term, long-term, episodic, and semantic memory
+- ** True Multimodal Processing** for simultaneous text, image, and audio understanding
+- ** Tool Integration** via LangChain with ReAct workflow support
+- ** Advanced Training** with recursive loop closure detection for continuous improvement
+- ** Production-Ready** with rate limiting, distributed tracing, security features, and async architecture
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
-### 🤖 Multi-Provider LLM Support
+###  Multi-Provider LLM Support
 
 Seamlessly switch between or combine multiple LLM providers:
 
@@ -32,7 +32,7 @@ Seamlessly switch between or combine multiple LLM providers:
 
 The unified client abstraction means you can change providers without rewriting your application code.
 
-### 🎭 Specialized Agent Types
+###  Specialized Agent Types
 
 Choose the right agent for your use case:
 
@@ -48,7 +48,7 @@ Choose the right agent for your use case:
 | **DataManagementAgent** | Data operations            | CRUD operations, validation     |
 | **DataFiltrationAgent** | Data filtering             | Quality checks, cleansing       |
 
-### 🧠 Advanced Memory Management
+###  Advanced Memory Management
 
 Four-tier memory system for sophisticated reasoning:
 
@@ -69,7 +69,7 @@ Four-tier memory system for sophisticated reasoning:
 | **DataManagementAgent** | Data operations | CRUD operations, validation |
 | **DataFiltrationAgent** | Data filtering | Quality checks, cleansing |
 
-### 🧠 Advanced Memory Management
+###  Advanced Memory Management
 
 Four-tier memory system for sophisticated reasoning:
 
@@ -78,7 +78,7 @@ Four-tier memory system for sophisticated reasoning:
 - **Episodic Memory**: Timestamped interaction history
 - **Semantic Memory**: Extracted patterns and learnings
 
-### 🎨 Multimodal Capabilities
+###  Multimodal Capabilities
 
 Process multiple input types simultaneously:
 
@@ -87,7 +87,7 @@ Process multiple input types simultaneously:
 - **Text**: Full conversational AI capabilities
 - **Combined**: Analyze text + images + audio in a single request
 
-### 🔧 Training & Learning
+###  Training & Learning
 
 Advanced training infrastructure:
 
@@ -97,7 +97,7 @@ Advanced training infrastructure:
 - **Dataset Integration**: Support for multiple dataset formats
 - **Pattern Recognition**: Automated detection of improvement cycles
 
-### 🛡️ Production-Ready Features
+###  Production-Ready Features
 
 Built for enterprise deployments:
 
@@ -108,7 +108,7 @@ Built for enterprise deployments:
 - **Type Safety**: Full Pydantic validation and type hints
 - **Error Handling**: Comprehensive exception handling and logging
 
-### 🔍 RAG (Retrieval Augmented Generation)
+###  RAG (Retrieval Augmented Generation)
 
 Ground responses in your data:
 
@@ -119,7 +119,7 @@ Ground responses in your data:
 
 ---
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - **Python 3.10+** (recommended: 3.11 or 3.12)
 - **API Keys** for one or more providers:
@@ -132,13 +132,13 @@ Ground responses in your data:
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/anumethod/multimodal-agent-builder.git
+git clone https://github.com/trademomentum-llc/multimodal-agent-builder.git
 cd multimodal-agent-builder
 
 # Create virtual environment
@@ -200,7 +200,7 @@ The API will be available at:
 
 ---
 
-## 💡 Usage Examples
+##  Usage Examples
 
 ### Example 1: Create and Use a Simple Agent
 
@@ -285,7 +285,7 @@ The API will be available at:
 
 ---
 
-## 💡 Usage Examples
+##  Usage Examples
 
 ### Example 1: Create and Use a Simple Agent
 
@@ -425,7 +425,7 @@ asyncio.run(main())
 
 ---
 
-## 📚 API Reference
+##  API Reference
 
 ### Core Endpoints
 
@@ -531,69 +531,69 @@ curl -X POST "http://localhost:8000/agents/agent_abc123/chat" \
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Project Structure
 
 ```
 multimodal-agent-builder/
-├── src/
-│   ├── agents/                    # Agent implementations
-│   │   ├── base_agent.py         # Base agent class
-│   │   ├── simple_agent.py       # Basic conversational agent
-│   │   ├── multimodal_agent.py   # Full multimodal agent
-│   │   ├── langchain_agent.py    # LangChain integration
-│   │   ├── guardian_agent.py     # Safety monitoring
-│   │   ├── coding_agent.py       # Code execution
-│   │   ├── data_analysis_agent.py
-│   │   ├── search_replace_agent.py
-│   │   ├── data_management_agent.py
-│   │   ├── data_filtration_agent.py
-│   │   └── agent_factory.py      # Agent factory pattern
-│   ├── models/                    # LLM client implementations
-│   │   ├── base_client.py        # Abstract base client
-│   │   ├── openai_client.py      # OpenAI integration
-│   │   ├── gemini_client.py      # Google Gemini integration
-│   │   └── claude_client.py      # Anthropic Claude integration
-│   ├── memory/                    # Memory management
-│   │   ├── short_term_memory.py
-│   │   ├── long_term_memory.py
-│   │   ├── episodic_memory.py
-│   │   └── semantic_memory.py
-│   ├── training/                  # Training infrastructure
-│   │   ├── recursive_loop_closure.py
-│   │   ├── adaptive_trainer.py
-│   │   └── training_manager.py
-│   ├── rag/                       # RAG capabilities
-│   │   ├── vector_store.py
-│   │   ├── embeddings.py
-│   │   └── retrieval.py
-│   ├── utils/                     # Utilities
-│   │   ├── image_utils.py        # Image processing
-│   │   ├── audio_utils.py        # Audio processing
-│   │   ├── logging.py            # Logging configuration
-│   │   └── narrative_enhancement.py
-│   ├── middleware/                # API middleware
-│   │   ├── rate_limiter.py
-│   │   └── security.py
-│   ├── routers/                   # API routers
-│   │   ├── agents.py
-│   │   ├── training.py
-│   │   └── rag.py
-│   ├── config/                    # Configuration
-│   │   └── config.py
-│   └── main.py                    # FastAPI application
-├── tests/                         # Test suite
-│   ├── test_agents/
-│   ├── test_models/
-│   ├── test_training/
-│   └── test_api/
-├── scripts/                       # Utility scripts
-├── datasets/                      # Training datasets
-├── .env.example                   # Environment template
-├── pyproject.toml                # Project configuration
-├── docker-compose.yml            # Docker setup
-└── README.md
+ src/
+    agents/                    # Agent implementations
+       base_agent.py         # Base agent class
+       simple_agent.py       # Basic conversational agent
+       multimodal_agent.py   # Full multimodal agent
+       langchain_agent.py    # LangChain integration
+       guardian_agent.py     # Safety monitoring
+       coding_agent.py       # Code execution
+       data_analysis_agent.py
+       search_replace_agent.py
+       data_management_agent.py
+       data_filtration_agent.py
+       agent_factory.py      # Agent factory pattern
+    models/                    # LLM client implementations
+       base_client.py        # Abstract base client
+       openai_client.py      # OpenAI integration
+       gemini_client.py      # Google Gemini integration
+       claude_client.py      # Anthropic Claude integration
+    memory/                    # Memory management
+       short_term_memory.py
+       long_term_memory.py
+       episodic_memory.py
+       semantic_memory.py
+    training/                  # Training infrastructure
+       recursive_loop_closure.py
+       adaptive_trainer.py
+       training_manager.py
+    rag/                       # RAG capabilities
+       vector_store.py
+       embeddings.py
+       retrieval.py
+    utils/                     # Utilities
+       image_utils.py        # Image processing
+       audio_utils.py        # Audio processing
+       logging.py            # Logging configuration
+       narrative_enhancement.py
+    middleware/                # API middleware
+       rate_limiter.py
+       security.py
+    routers/                   # API routers
+       agents.py
+       training.py
+       rag.py
+    config/                    # Configuration
+       config.py
+    main.py                    # FastAPI application
+ tests/                         # Test suite
+    test_agents/
+    test_models/
+    test_training/
+    test_api/
+ scripts/                       # Utility scripts
+ datasets/                      # Training datasets
+ .env.example                   # Environment template
+ pyproject.toml                # Project configuration
+ docker-compose.yml            # Docker setup
+ README.md
 ```
 
 ### Design Patterns
@@ -615,7 +615,7 @@ multimodal-agent-builder/
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -650,7 +650,7 @@ DEFAULT_PRESENCE_PENALTY=0.0
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ### Run Tests
 
@@ -682,7 +682,7 @@ pytest tests/test_api/
 
 ---
 
-## 🛡️ Security
+##  Security
 
 ### Built-in Security Features
 
@@ -723,7 +723,7 @@ pytest tests/test_api/
 
 ---
 
-## 🐳 Docker Deployment
+##  Docker Deployment
 
 ### Using Docker Compose
 
@@ -775,7 +775,7 @@ volumes:
 
 ---
 
-## 📊 Monitoring & Observability
+##  Monitoring & Observability
 
 ### OpenTelemetry Integration
 
@@ -812,7 +812,7 @@ logger.info("Agent created", extra={"agent_id": agent.id})
 
 ---
 
-## 🚀 Production Deployment
+##  Production Deployment
 
 ### Deployment Checklist
 
@@ -854,7 +854,7 @@ gunicorn src.main:app \
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please follow these guidelines:
 
@@ -889,17 +889,17 @@ We welcome contributions! Please follow these guidelines:
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 ### Current Version (v0.1.0)
 
-- ✅ Multi-provider LLM integration
-- ✅ Multimodal processing (text, image, audio)
-- ✅ Multiple agent types
-- ✅ Memory management system
-- ✅ REST API with FastAPI
-- ✅ Basic training infrastructure
-- ✅ Rate limiting and security
+-  Multi-provider LLM integration
+-  Multimodal processing (text, image, audio)
+-  Multiple agent types
+-  Memory management system
+-  REST API with FastAPI
+-  Basic training infrastructure
+-  Rate limiting and security
 
 ### Upcoming Features
 
@@ -916,7 +916,7 @@ We welcome contributions! Please follow these guidelines:
 
 ---
 
-## 📖 Additional Resources
+##  Additional Resources
 
 ### Documentation
 
@@ -932,12 +932,12 @@ We welcome contributions! Please follow these guidelines:
 
 ### Community
 
-- [GitHub Issues](https://github.com/anumethod/multimodal-agent-builder/issues) - Bug reports and feature requests
-- [Discussions](https://github.com/anumethod/multimodal-agent-builder/discussions) - Community discussions
+- [GitHub Issues](https://github.com/trademomentum-llc/multimodal-agent-builder/issues) - Bug reports and feature requests
+- [Discussions](https://github.com/trademomentum-llc/multimodal-agent-builder/discussions) - Community discussions
 
 ---
 
-## ❓ Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -991,13 +991,13 @@ See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for current edge cases and limitations.
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **OpenAI** for GPT-4 and the OpenAI API
 - **Google** for Gemini and Generative AI
@@ -1009,20 +1009,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📧 Support
+##  Support
 
-- **Issues**: [GitHub Issues](https://github.com/anumethod/multimodal-agent-builder/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/anumethod/multimodal-agent-builder/discussions)
+- **Issues**: [GitHub Issues](https://github.com/trademomentum-llc/multimodal-agent-builder/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/trademomentum-llc/multimodal-agent-builder/discussions)
 - **Email**: Open an issue for support requests
 
 ---
 
-## 🌟 Star History
+##  Star History
 
-If you find this project useful, please consider giving it a star ⭐️
+If you find this project useful, please consider giving it a star 
 
 ---
 
 **Status**: Active Development | **Version**: 0.1.0 | **License**: MIT
 
-*Built with ❤️ for the AI community*
+*Built with  for the AI community*

@@ -93,9 +93,9 @@ def install_dependencies():
     result = subprocess.run(cmd)
 
     if result.returncode == 0:
-        print("✅ Test dependencies installed successfully")
+        print(" Test dependencies installed successfully")
     else:
-        print("❌ Failed to install test dependencies")
+        print(" Failed to install test dependencies")
 
     return result.returncode
 
@@ -107,7 +107,7 @@ def lint_code():
     # Try to run ruff for linting
     try:
         subprocess.run(["ruff", "check", "src", "tests"], check=True)
-        print("✅ Code linting passed")
+        print(" Code linting passed")
         return 0
     except (subprocess.CalledProcessError, FileNotFoundError):
         # Fallback to pylint if available
@@ -115,7 +115,7 @@ def lint_code():
             subprocess.run(["pylint", "src"], check=False)
             return 0
         except FileNotFoundError:
-            print("⚠️  No linter found (install ruff or pylint)")
+            print("  No linter found (install ruff or pylint)")
             return 0
 
 
@@ -125,13 +125,13 @@ def format_code():
 
     try:
         subprocess.run(["black", "--check", "src", "tests"], check=True)
-        print("✅ Code formatting is correct")
+        print(" Code formatting is correct")
         return 0
     except subprocess.CalledProcessError:
-        print("⚠️  Code needs formatting (run: black src tests)")
+        print("  Code needs formatting (run: black src tests)")
         return 1
     except FileNotFoundError:
-        print("⚠️  Black not found (install with: pip install black)")
+        print("  Black not found (install with: pip install black)")
         return 0
 
 
