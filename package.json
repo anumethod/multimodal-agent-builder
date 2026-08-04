@@ -43,6 +43,6 @@
     "qs": "^6.15.3",
     "postcss": "^8.5.16",
     "path-to-regexp": "^8.4.2",
-    "ip-address": "^10.2.0"
+    "ip-address": "^10.4.0"
   }
 }
