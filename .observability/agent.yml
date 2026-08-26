@@ -1,0 +1,7 @@
+project: Multimodal-agent-builder
+language: python
+test:
+  - name: pytest
+    command: ["/Users/nnos/Projects/Sovereign/observability-hub/.venv/bin/python3.14", "-m", "pytest", "tests/", "-q"]
+    parser: pytest
+    timeout: 300

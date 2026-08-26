@@ -16,11 +16,14 @@
     "types": ["node"],
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["server/**/*.ts", "shared/**/*.ts", "vite.config.ts"],
+  "include": ["server/**/*.ts", "shared/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "train-test-validate",
     "multimodal-agent-builder"
+  ],
+  "references": [
+    { "path": "./tsconfig.node.json" }
   ]
 }
